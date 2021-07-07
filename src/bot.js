@@ -29,7 +29,7 @@ discordClient.on("message", async message => {
         .split(/ +/g);
 
     if ( cmdName.toLowerCase() === "grow" ) {
-
+        var growRequest = await growPrompts(message);
     }
 });
 

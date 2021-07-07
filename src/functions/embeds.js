@@ -23,7 +23,7 @@ async function growPrompts(message) {
         .setFooter(`User transaction: ${message.author.username}`);
     
     message.reply(prompt);
-    await message.channel.awaitMessage(filter, options)
+    await message.channel.awaitMessages(filter, options)
             .then( collected => {
                 confirm = collected.first().content
             })
@@ -38,9 +38,10 @@ async function growPrompts(message) {
     }
 
     prompt.fields = [];
+    var dinoPriceList = await getDinoPrices();
     var prices = "";
-    for (var x = 0; x < getDinoPrices.length; x++) {
-        prices += `${getDinoPrices[x].ShortName} : $${getDinoPrices[x].Price}\n`;
+    for (var x = 0; x < dinoPriceList.length; x++) {
+        prices += `${dinoPriceList[x].ShortName}\t:\t$${dinoPriceList[x].Price.toLocaleString()}\n`;
     }
     prompt.addFields(
         {
@@ -53,7 +54,7 @@ async function growPrompts(message) {
     var price;
     var dinoFound = false;
     message.reply(prompt);
-    await message.channel.awaitMessage(filter, options)
+    await message.channel.awaitMessages(filter, options)
         .then( collected => {
             dino = collected.first().content
         } )
@@ -62,9 +63,9 @@ async function growPrompts(message) {
             return timedOut = true;
         });
     if (timedOut) return false;
-    for (var x = 0; x < getDinoPrices.length; x++) {
-        if( dino.toLowerCase() === getDinoPrices[x].ShortName.toLowerCase() ) {
-            price = getDinoPrices[x].Price;
+    for (var x = 0; x < dinoPriceList.length; x++) {
+        if( dino.toLowerCase() == dinoPriceList[x].ShortName.toLowerCase() ) {
+            price = dinoPriceList[x].Price;
             dinoFound = true;
             break;
         }
@@ -76,12 +77,12 @@ async function growPrompts(message) {
 
     prompt.fields = [];
     var confirm;
-    prompt.addFields = ( {
+    prompt.addFields( {
         name: `Confirm your order of a ${dino}.`,
         value: `Please type either:\nyes\nno`
     });
     message.reply(prompt);
-    await message.channel.awaitMessage(filter, options)
+    await message.channel.awaitMessages(filter, options)
         .then( collected => {
             confirm = collected.first().content
         } )
