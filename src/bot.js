@@ -33,9 +33,22 @@ discordClient.on("message", async message => {
     if ( cmdName.toLowerCase() === "grow" ) {
         var growRequest = await growPrompts(message);
         console.log(growRequest);
+        if (processing) {
+            message.reply(`please wait on other user(s) to complete their transaction.`);
+        }
+        while (processing){
+            console.log(`${message.author.username}[${message.author.id}] is waiting in queue. . .`);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
         processing = true;
         //call file transfer function here
-        processFileTransfer(message, growRequest);
+        if (await processFileTransfer(message, growRequest) ) {
+            processing = false;
+            message.reply(`successfully grown your dino. Please log back in to the server.`);
+        } else {
+            processing = false;
+        }
     }
 });
 

@@ -2,7 +2,7 @@ const ftp = require('basic-ftp');
 const fs = require('fs');
 const server = process.env.SERVER;
 const ftpLocation = process.env.FTPLOCATION;
-const ftpPort = process.env.PORT;
+const ftpPort = process.env.FTPPORT;
 const ftpusername = process.env.FTPUSERNAME;
 const ftppassword = process.env.FTPPASSWORD;
 
@@ -16,22 +16,23 @@ async function deleteLocalFile(fileId) {
     });
 }
 
-function processFileTransfer(message, request) {
+async function processFileTransfer(message, request) {
     var steamId = request[2];
     var price = parseInt(request[1]);
     var requestedDino = request[0];
 
+    // if (!await downloadFile(steamId)) return false;
     if (!await downloadFile(steamId)) return false;
     if (!await editFile(requestedDino, steamId)) return false;
     if (!await deductMoney(message, price, steamId)) return false;
-    if (!await uploadFile(steamId)) return false;
+    if (!await uploadFile(message, steamId)) return false;
 
     return true;
 }
 
 async function downloadFile(steamId) {
     var ftpClient = new ftp.Client();
-    console.log(`Downloading file. . .`);
+    console.log(`Downloading file. . . ${server}${steamId}.json`);
     ftpClient.ftp.ipFamily = 4;
     try {
         await ftpClient.access({
@@ -50,16 +51,20 @@ async function downloadFile(steamId) {
 }
 
 async function editFile(requestedDino, steamId) {
+    console.log(`Editing file. . .`);
     try{
         var data = fs.readFileSync(`${steamId}.json`, `utf-8`);
         var contents = JSON.parse(data);
-        if(contents.getCharacterClass.toLowerCase().startsWith(requestedDino.toLowerCase())){
-            for ( var x = 0; x < getDinoPrices.length; x++ ) {
-                if( getDinoPrices[x].ShortName.toLowerCase() == requestedDino.toLowerCase() ) {
+        
+        if(contents.CharacterClass.toLowerCase().startsWith(requestedDino.toLowerCase())){
+            
+            var dinoPriceList = await getDinoPrices();
+            for ( var x = 0; x < dinoPriceList.length; x++ ) {
+                if( dinoPriceList[x].ShortName.toLowerCase() == requestedDino.toLowerCase() ) {
                     var locationParts;
                     var completed;
 
-                    contents.CharacterClass = getDinoPrices[x].CodeName;
+                    contents.CharacterClass = dinoPriceList[x].CodeName;
                     contents.Growth = "1.0";
                     contents.Hunger = "9999";
                     contents.Thirst = "9999";
@@ -76,6 +81,7 @@ async function editFile(requestedDino, steamId) {
                 }
             }
             fs.writeFileSync(`${steamId}.json`, JSON.stringify(contents, null, 4));
+            return true;
         }
     } catch ( err ) {
         console.log(`Error occurred attempting to edit json: ${err}`);
@@ -85,28 +91,28 @@ async function editFile(requestedDino, steamId) {
 }
 
 async function deductMoney(message, price, steamId) {
-    var balance = getUserAmount(message.guild.id, message.author.id);
+    console.log(`Deducting points. . .`);
+    var balance = await getUserAmount(message.guild.id, message.author.id);
     var bank = parseInt(balance[0]);
     var cash = parseInt(balance[1]);
 
     if( bank >= price ) {
         if( deductUserAmountBank(message.guild.id, message.author.id, price) ) {
-            deleteLocalFile(steamId);
             return true;
         }
     } else if ( cash >= price ) {
         if( deductUserAmountCash(message.guild.id, message.author.id, price) ) {
-            deleteLocalFile(steamId);
             return true;
         }
     } else if ( (price > bank) && (price > cash) ) {
         console.log(`${message.author.username} does not have enough points for this transaction.`);
         deleteLocalFile(steamId);
+        console.log(`here 3`);
         return false;
     }
 }
 
-async function uploadFile(steamId) {
+async function uploadFile(message, steamId) {
     var ftpClient = new ftp.Client();
     console.log(`Uploading file. . .`);
     ftpClient.ftp.ipFamily = 4;
@@ -129,6 +135,7 @@ async function uploadFile(steamId) {
             deleteLocalFile(steamId);
             return false;
         }
+        deleteLocalFile(steamId);
         return true;
     } catch( err ) {
         message.reply(`could not grow your dino. . . Try again please.`);
