@@ -16,14 +16,14 @@ async function deleteLocalFile(fileId) {
     });
 }
 
-async function processFileTransfer(message, request) {
+async function processFileTransfer(message, request, type) {
     var steamId = request[2];
     var price = parseInt(request[1]);
     var requestedDino = request[0];
 
     // if (!await downloadFile(steamId)) return false;
     if (!await downloadFile(steamId)) return false;
-    if (!await editFile(requestedDino, steamId)) return false;
+    if (!await editFile(message,requestedDino, steamId, type)) return false;
     if (!await deductMoney(message, price, steamId)) return false;
     if (!await uploadFile(message, steamId)) return false;
 
@@ -50,14 +50,43 @@ async function downloadFile(steamId) {
     return true;
 }
 
-async function editFile(requestedDino, steamId) {
+async function editFile(message, requestedDino, steamId, type) {
     console.log(`Editing file. . .`);
     try{
         var data = fs.readFileSync(`${steamId}.json`, `utf-8`);
         var contents = JSON.parse(data);
-        
-        if(contents.CharacterClass.toLowerCase().startsWith(requestedDino.toLowerCase())){
-            
+        if (type == "grow"){
+            if(contents.CharacterClass.toLowerCase().startsWith(requestedDino.toLowerCase())){
+                
+                var dinoPriceList = await getDinoPrices();
+                for ( var x = 0; x < dinoPriceList.length; x++ ) {
+                    if( dinoPriceList[x].ShortName.toLowerCase() == requestedDino.toLowerCase() ) {
+                        var locationParts;
+                        var completed;
+
+                        contents.CharacterClass = dinoPriceList[x].CodeName;
+                        contents.Growth = "1.0";
+                        contents.Hunger = "9999";
+                        contents.Thirst = "9999";
+                        contents.Stamina = "9999";
+                        contents.Health = "15000";
+                        locationParts = contents.Location_Thenyaw_Island.split("Z=", 2);
+                        locationParts[1] = parseFloat(locationParts[1]);
+                        locationParts[1] += 1.5;
+                        locationParts[0] += "Z=";
+                        locationParts[1] = locationParts[1].toString();
+                        completed = locationParts[0] + locationParts[1];
+                        contents.Location_Thenyaw_Island = completed;
+                        break;
+                    }
+                }
+                fs.writeFileSync(`${steamId}.json`, JSON.stringify(contents, null, 4));
+                return true;
+            } else {
+                message.reply(`you do not have this ${requestedDino} in game. Please create a ${requestedDino} and try again.`);
+                return false;
+            }
+        } else if(type == "inject") {
             var dinoPriceList = await getDinoPrices();
             for ( var x = 0; x < dinoPriceList.length; x++ ) {
                 if( dinoPriceList[x].ShortName.toLowerCase() == requestedDino.toLowerCase() ) {
@@ -81,10 +110,12 @@ async function editFile(requestedDino, steamId) {
                 }
             }
             fs.writeFileSync(`${steamId}.json`, JSON.stringify(contents, null, 4));
-            return true;
+            return true; 
         }
+        
     } catch ( err ) {
         console.log(`Error occurred attempting to edit json: ${err}`);
+        message.reply(`something went wrong growing your dino.`);
         deleteLocalFile(steamId);
         return false;
     }
