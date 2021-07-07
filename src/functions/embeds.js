@@ -76,6 +76,27 @@ async function growPrompts(message) {
     }
 
     prompt.fields = [];
+    var steamId;
+    prompt.addFields( {
+        name: `Please enter your steam ID`,
+        value: `[17 digit code starting with 7656].`
+    } );
+    message.reply(prompt);
+    await message.channel.awaitMessages(filter, options)
+        .then( collected => 
+            steamId = collected.first().content
+        )
+        .catch( () => {
+            message.reply(`time's up. Please try again.`);
+            return timedOut = true;
+        } );
+    if(timedOut) return false;
+    if(!steamId.startsWith('7656')) {
+        message.reply(`that is an invalid steam ID, please try again.`);
+        return false;
+    }
+
+    prompt.fields = [];
     var confirm;
     prompt.addFields( {
         name: `Confirm your order of a ${dino}.`,
@@ -91,7 +112,7 @@ async function growPrompts(message) {
             return timedOut = true;
         } );
     if(timedOut) return false;
-    if (confirm.toLowerCase().startsWith("y")) return [dino, price];
+    if (confirm.toLowerCase().startsWith("y")) return [dino, price, steamId];
     message.reply(`transaction cancelled.`);
     return false;
 };

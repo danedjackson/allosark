@@ -10,7 +10,9 @@ const prefix = process.env.PREFIX;
 //Logs a success message when log in succeeds
 
 //Importing functions
-var { growPrompts } = require('./functions/embeds')
+var { growPrompts } = require('./functions/embeds');
+var { processFileTransfer } = require('./functions/fileTransfer');
+var processing = false;
 
 discordClient.on("ready", () => {
     console.log(`Successfully logged in.`);
@@ -30,6 +32,10 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === "grow" ) {
         var growRequest = await growPrompts(message);
+        console.log(growRequest);
+        processing = true;
+        //call file transfer function here
+        processFileTransfer(message, growRequest);
     }
 });
 
