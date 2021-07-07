@@ -1,0 +1,25 @@
+{
+  "name": "allosisle",
+  "version": "1.0.0",
+  "description": "Grow bot for Allo's Ark Isle discord server",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/bot.js",
+    "dev": "nodemon ./src/bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danedjackson/allosark.git"
+  },
+  "author": "Dane Jackson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danedjackson/allosark/issues"
+  },
+  "homepage": "https://github.com/danedjackson/allosark#readme",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^10.0.0"
+  }
+}
