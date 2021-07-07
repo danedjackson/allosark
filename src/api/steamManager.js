@@ -54,6 +54,7 @@ async function addSteamID (userID, steamID) {
     await checkIDValid(steamID);
     if (isSteamValid == false) return false;
     var steamInfo = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../json/steam-id.json")));
+    console.log(steamInfo);
     //Search for user
     for (var x = 0; x < steamInfo.length; x++) {
         //Found user
