@@ -176,4 +176,33 @@ async function uploadFile(message, steamId) {
     }
 }
 
-module.exports = { processFileTransfer };
+async function deleteFile(message, steamId) {
+    var ftpClient = new ftp.Client();
+    console.log(`Deleting remote file. . .`);
+    ftpClient.ftp.ipFamily = 4;
+    try {
+        await ftpClient.access({
+            host: ftpLocation,
+            port: ftpPort,
+            user: ftpusername,
+            password: ftppassword
+        });
+        var status = await ftpClient.remove(`${server}${steamId}.json`);
+        var retryCount = 0;
+        while(status.code != 250 && retryCount < 2) {
+            status = await ftpClient.remove(`${server}${steamId}.json`);
+            retryCount++;
+        }
+        if (status.code != 250) {
+            message.reply(`could not slay your dino. . . Try again please.`);
+            console.log(`Status code from delete attempt: ${status.code}`);
+            return false;
+        }
+        return true;
+    } catch( err ) {
+        message.reply(`could not slay your dino. . . Try again please.`);
+        console.log(`Error deleting file: ${err}`);
+        return false;
+    }
+}
+module.exports = { processFileTransfer, deleteFile};

@@ -13,8 +13,8 @@ const prefix = process.env.PREFIX;
 //Logs a success message when log in succeeds
 
 //Importing functions
-var { growPrompts, injectPrompts } = require('./functions/embeds');
-var { processFileTransfer } = require('./functions/fileTransfer');
+var { growPrompts, injectPrompts, slayPrompts } = require('./functions/embeds');
+var { processFileTransfer, deleteFile } = require('./functions/fileTransfer');
 var { getSteamID, updateSteamID, addSteamID } = require('./api/steamManager');
 
 
@@ -57,8 +57,10 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === "grow" ) {
         var growRequest = await growPrompts(message);
-        console.log(growRequest);
+        console.log(`grow request: ${growRequest}`);
         
+        if(!growRequest) return;
+
         await processingCheck(message);
 
         processing = true;
@@ -73,7 +75,9 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === "inject" ) {
         var injectRequest = await injectPrompts(message);
-        console.log(injectRequest);
+        console.log(`inject request: ${injectRequest}`);
+
+        if (!injectRequest) return;
 
         await processingCheck(message);
 
@@ -81,6 +85,24 @@ discordClient.on("message", async message => {
         if (await processFileTransfer(message, injectRequest, "inject") ) {
             processing = false;
             message.reply(`successfully injected your dino. Please log back in to the server.`);
+        } else {
+            processing = false;
+        }
+    }
+
+    if ( cmdName.toLowerCase() === "slay" ) {
+        var slayRequest = await slayPrompts(message);
+
+        if(!slayRequest) return;
+
+        console.log(`slay request: ${slayRequest}`);
+
+        await processingCheck(message);
+
+        processing = true;
+        if( await deleteFile(message, slayRequest) ) {
+            processing = false;
+            message.reply(`your dino is dead.`);
         } else {
             processing = false;
         }
@@ -101,7 +123,7 @@ discordClient.on("message", async message => {
 
         if( !await updateSteamID(args[0], args[1]) ) return message.reply(`something went wrong updating this ID.`);
 
-        return message.reply(`steam id successfully updated.`)
+        return message.reply(`${args[0]}'s steam id successfully updated.`);
 
     }
 
