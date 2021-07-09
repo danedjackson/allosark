@@ -91,8 +91,8 @@ async function editFile(message, requestedDino, steamId, type) {
             for ( var x = 0; x < dinoPriceList.length; x++ ) {
                 if( dinoPriceList[x].ShortName.toLowerCase() == requestedDino.toLowerCase() ) {
                     //Only male spinos / shants allowed
-                    if ( contents.CharacterClass.toLowerCase() == "shant" || 
-                        contents.CharacterClass.toLowerCase() == "spino") {
+                    if ( requestedDino.toLowerCase() == "shant" || 
+                        requestedDino.toLowerCase() == "spino") {
                             contents.bGender = false;
                     }
                     var locationParts;
