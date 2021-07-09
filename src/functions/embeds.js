@@ -4,6 +4,14 @@ const prefix = process.env.PREFIX;
 var { getDinoPrices } = require('./pricelist');
 var { getSteamID } = require('../api/steamManager');
 
+const cancelCheck = (msg) => {
+    if(msg.toLowerCase().startsWith("cancel")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 async function growPrompts(message) {
     var timedOut = false;
     var safelogged;

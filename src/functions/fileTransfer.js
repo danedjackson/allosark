@@ -57,7 +57,6 @@ async function editFile(message, requestedDino, steamId, type) {
         var contents = JSON.parse(data);
         if (type == "grow"){
             if(contents.CharacterClass.toLowerCase().startsWith(requestedDino.toLowerCase())){
-                
                 var dinoPriceList = await getDinoPrices();
                 for ( var x = 0; x < dinoPriceList.length; x++ ) {
                     if( dinoPriceList[x].ShortName.toLowerCase() == requestedDino.toLowerCase() ) {
@@ -88,8 +87,14 @@ async function editFile(message, requestedDino, steamId, type) {
             }
         } else if(type == "inject") {
             var dinoPriceList = await getDinoPrices();
+
             for ( var x = 0; x < dinoPriceList.length; x++ ) {
                 if( dinoPriceList[x].ShortName.toLowerCase() == requestedDino.toLowerCase() ) {
+                    //Only male spinos / shants allowed
+                    if ( contents.CharacterClass.toLowerCase() == "shant" || 
+                        contents.CharacterClass.toLowerCase() == "spino") {
+                            contents.bGender = false;
+                    }
                     var locationParts;
                     var completed;
 

@@ -4,6 +4,7 @@ const discordClient = new Discord.Client();
 const fs = require('fs');
 const path = require('path');
 const adminUsers = JSON.parse(fs.readFileSync(path.resolve(__dirname, "./json/admin-roles.json")));
+const channelIds = JSON.parse(fs.readFileSync(path.resolve(__dirname, "./json/channels.json")));
 
 //Loads environment variables from the .env file
 require('dotenv').config();
@@ -39,6 +40,19 @@ function adminRoleCheck(message) {
     return false;
 }
 
+function channelIdCheck(channel, cmd) {
+    if ( cmd.toLowerCase() == "grow" || cmd.toLowerCase() == "inject") {
+        if ( channel == channelIds.growChannel ) return true;
+    }
+    if ( cmd.toLowerCase() == "slay" ) {
+        if ( channel == channelIds.slayChannel ) return true;
+    }
+    if ( cmd.toLowerCase() == "link" || cmd.toLowerCase() == "updateid" ) {
+        if ( channel == channelIds.steamidChannel ) return true;
+    }
+    return false;
+}
+
 discordClient.on("ready", () => {
     console.log(`Successfully logged in.`);
 });
@@ -56,6 +70,9 @@ discordClient.on("message", async message => {
         .split(/ +/g);
 
     if ( cmdName.toLowerCase() === "grow" ) {
+
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#862883475702546453>`);
+
         var growRequest = await growPrompts(message);
         console.log(`grow request: ${growRequest}`);
         
@@ -74,6 +91,8 @@ discordClient.on("message", async message => {
     }
 
     if ( cmdName.toLowerCase() === "inject" ) {
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#862883475702546453>`);
+
         var injectRequest = await injectPrompts(message);
         console.log(`inject request: ${injectRequest}`);
 
@@ -91,8 +110,11 @@ discordClient.on("message", async message => {
     }
 
     if ( cmdName.toLowerCase() === "slay" ) {
-        var slayRequest = await slayPrompts(message);
+        
+        if ( !channelIdCheck(message.channel.id, "slay") ) return message.reply(`please use <#862883639586717756>`);
 
+        var slayRequest = await slayPrompts(message);
+        console.log(`slay request: ${slayRequest}`);
         if(!slayRequest) return;
 
         console.log(`slay request: ${slayRequest}`);
@@ -109,6 +131,9 @@ discordClient.on("message", async message => {
     }
 
     if ( cmdName.toLowerCase() ===  "link") {
+        
+        if ( !channelIdCheck(message.channel.id, "link") ) return message.reply(`please use <#862878037699330058>`);
+
         if( args.length != 1 ) return message.reply(`please use the following format:\n${prefix}link [steam ID here]`);
 
         if( !await addSteamID(message.author.id, args[0]) ) return message.reply(`steam ID may already be in use, or it is invalid, please try again`);
@@ -117,6 +142,9 @@ discordClient.on("message", async message => {
     }
 
     if ( cmdName.toLowerCase() === "updateid" ) {
+        
+        if ( !channelIdCheck(message.channel.id, "link") ) return message.reply(`please use <#862878037699330058>`);
+        
         if (!adminRoleCheck(message)) return message.reply(`you do not have the rights to use this command.`);
         
         if( args.length != 2 ) return message.reply(`please use the followeing format\n${prefix}updateid [@user] [updated steam ID]`);
