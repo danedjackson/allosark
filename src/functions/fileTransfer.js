@@ -60,6 +60,11 @@ async function editFile(message, requestedDino, steamId, type) {
                 var dinoPriceList = await getDinoPrices();
                 for ( var x = 0; x < dinoPriceList.length; x++ ) {
                     if( dinoPriceList[x].ShortName.toLowerCase() == requestedDino.toLowerCase() ) {
+                        //Only male spinos / shants allowed
+                        if ( requestedDino.toLowerCase() == "shant" || 
+                            requestedDino.toLowerCase() == "spino") {
+                                contents.bGender = false;
+                        }
                         var locationParts;
                         var completed;
 
@@ -69,13 +74,13 @@ async function editFile(message, requestedDino, steamId, type) {
                         contents.Thirst = "9999";
                         contents.Stamina = "9999";
                         contents.Health = "15000";
-                        locationParts = contents.Location_Thenyaw_Island.split("Z=", 2);
+                        locationParts = contents.Location_Isle_V3.split("Z=", 2);
                         locationParts[1] = parseFloat(locationParts[1]);
                         locationParts[1] += 1.5;
                         locationParts[0] += "Z=";
                         locationParts[1] = locationParts[1].toString();
                         completed = locationParts[0] + locationParts[1];
-                        contents.Location_Thenyaw_Island = completed;
+                        contents.Location_Isle_V3 = completed;
                         break;
                     }
                 }
@@ -98,19 +103,21 @@ async function editFile(message, requestedDino, steamId, type) {
                     var locationParts;
                     var completed;
 
+                    contents.Location_Isle_V3 = "X=-480268.25 Y=-34860.043 Z=-72606.086"
+
                     contents.CharacterClass = dinoPriceList[x].CodeName;
                     contents.Growth = "1.0";
                     contents.Hunger = "9999";
                     contents.Thirst = "9999";
                     contents.Stamina = "9999";
                     contents.Health = "15000";
-                    locationParts = contents.Location_Thenyaw_Island.split("Z=", 2);
+                    locationParts = contents.Location_Isle_V3.split("Z=", 2);
                     locationParts[1] = parseFloat(locationParts[1]);
                     locationParts[1] += 1.5;
                     locationParts[0] += "Z=";
                     locationParts[1] = locationParts[1].toString();
                     completed = locationParts[0] + locationParts[1];
-                    contents.Location_Thenyaw_Island = completed;
+                    contents.Location_Isle_V3 = completed;
                     break;
                 }
             }
