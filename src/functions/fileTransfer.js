@@ -44,7 +44,7 @@ async function downloadFile(steamId) {
         await ftpClient.downloadTo(steamId + ".json", `${server}${steamId}.json`);
     } catch ( err ) {
         console.log(`Error while downloading file: ${err}`);
-        deleteLocalFile(steamId);
+        message.reply(`something went wrong retrieving your dino information. Have you already safelogged with a dino on the server?`);
         return false;
     }
     return true;
