@@ -44,6 +44,7 @@ async function downloadFile(steamId) {
         await ftpClient.downloadTo(steamId + ".json", `${server}${steamId}.json`);
     } catch ( err ) {
         console.log(`Error while downloading file: ${err}`);
+        message.reply(`something went wrong retrieving your dino information. Have you already safelogged with a dino on the server?`);
         deleteLocalFile(steamId);
         return false;
     }
@@ -103,7 +104,8 @@ async function editFile(message, requestedDino, steamId, type) {
                     var locationParts;
                     var completed;
 
-                    contents.Location_Isle_V3 = "X=-480268.25 Y=-34860.043 Z=-72606.086"
+                    contents.Location_Isle_V3 = "X=-236411.797 Y=513087.344 Z=-27230.091"
+                    
 
                     contents.CharacterClass = dinoPriceList[x].CodeName;
                     contents.Growth = "1.0";
