@@ -22,7 +22,7 @@ async function processFileTransfer(message, request, type) {
     var requestedDino = request[0];
 
     // if (!await downloadFile(steamId)) return false;
-    if (!await downloadFile(steamId)) return false;
+    if (!await downloadFile(message, steamId)) return false;
     if (!await editFile(message,requestedDino, steamId, type)) return false;
     if (!await deductMoney(message, price, steamId)) return false;
     if (!await uploadFile(message, steamId)) return false;
@@ -30,7 +30,7 @@ async function processFileTransfer(message, request, type) {
     return true;
 }
 
-async function downloadFile(steamId) {
+async function downloadFile(message, steamId) {
     var ftpClient = new ftp.Client();
     console.log(`Downloading file. . . ${server}${steamId}.json`);
     ftpClient.ftp.ipFamily = 4;
