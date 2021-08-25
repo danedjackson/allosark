@@ -104,12 +104,12 @@ async function editFile(message, requestedDino, steamId, type) {
                     var locationParts;
                     var completed;
 
-                    contents.Location_Isle_V3 = "X=-236411.797 Y=513087.344 Z=-27230.091"
+                    contents.Location_Isle_V3 = "X=382985 Y=59854.539 Z=-44814.334"
                     
 
                     contents.CharacterClass = dinoPriceList[x].CodeName;
                     contents.Growth = "1.0";
-                    contents.Hunger = "9999";
+                    contents.Hunger = "200";
                     contents.Thirst = "9999";
                     contents.Stamina = "9999";
                     contents.Health = "15000";
