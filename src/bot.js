@@ -71,7 +71,7 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === "grow" ) {
 
-        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#862883475702546453>`);
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#880990462050197514>`);
 
         var growRequest = await growPrompts(message);
         console.log(`grow request: ${growRequest}`);
@@ -91,7 +91,7 @@ discordClient.on("message", async message => {
     }
 
     if ( cmdName.toLowerCase() === "inject" ) {
-        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#862883475702546453>`);
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#880990462050197514>`);
 
         var injectRequest = await injectPrompts(message);
         console.log(`inject request: ${injectRequest}`);
@@ -111,7 +111,7 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === "slay" ) {
         
-        if ( !channelIdCheck(message.channel.id, "slay") ) return message.reply(`please use <#862883639586717756>`);
+        if ( !channelIdCheck(message.channel.id, "slay") ) return message.reply(`please use <#880990389673279488>`);
 
         var slayRequest = await slayPrompts(message);
         console.log(`slay request: ${slayRequest}`);
@@ -132,7 +132,7 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() ===  "link") {
         
-        if ( !channelIdCheck(message.channel.id, "link") ) return message.reply(`please use <#862878037699330058>`);
+        if ( !channelIdCheck(message.channel.id, "link") ) return message.reply(`please use <#880990510527950848>`);
 
         if( args.length != 1 ) return message.reply(`please use the following format:\n${prefix}link [steam ID here]`);
 
@@ -143,7 +143,7 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === "updateid" ) {
         
-        if ( !channelIdCheck(message.channel.id, "link") ) return message.reply(`please use <#862878037699330058>`);
+        if ( !channelIdCheck(message.channel.id, "link") ) return message.reply(`please use <#880990510527950848>`);
         
         if (!adminRoleCheck(message)) return message.reply(`you do not have the rights to use this command.`);
         

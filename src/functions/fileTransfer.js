@@ -69,13 +69,13 @@ async function editFile(message, requestedDino, steamId, type) {
                         contents.Thirst = "9999";
                         contents.Stamina = "9999";
                         contents.Health = "15000";
-                        locationParts = contents.Location_Thenyaw_Island.split("Z=", 2);
+                        locationParts = contents.Location_Isle_V3.split("Z=", 2);
                         locationParts[1] = parseFloat(locationParts[1]);
-                        locationParts[1] += 1.5;
+                        locationParts[1] += 5;
                         locationParts[0] += "Z=";
                         locationParts[1] = locationParts[1].toString();
                         completed = locationParts[0] + locationParts[1];
-                        contents.Location_Thenyaw_Island = completed;
+                        contents.Location_Isle_V3 = completed;
                         break;
                     }
                 }
@@ -104,13 +104,13 @@ async function editFile(message, requestedDino, steamId, type) {
                     contents.Thirst = "9999";
                     contents.Stamina = "9999";
                     contents.Health = "15000";
-                    locationParts = contents.Location_Thenyaw_Island.split("Z=", 2);
+                    locationParts = contents.Location_Isle_V3.split("Z=", 2);
                     locationParts[1] = parseFloat(locationParts[1]);
-                    locationParts[1] += 1.5;
+                    locationParts[1] += 5;
                     locationParts[0] += "Z=";
                     locationParts[1] = locationParts[1].toString();
                     completed = locationParts[0] + locationParts[1];
-                    contents.Location_Thenyaw_Island = completed;
+                    contents.Location_Isle_V3 = completed;
                     break;
                 }
             }
@@ -142,8 +142,8 @@ async function deductMoney(message, price, steamId) {
         }
     } else if ( (price > bank) && (price > cash) ) {
         console.log(`${message.author.username} does not have enough points for this transaction.`);
+        message.reply(`you do not have enough points to buy that dino.`);
         deleteLocalFile(steamId);
-        console.log(`here 3`);
         return false;
     }
 }

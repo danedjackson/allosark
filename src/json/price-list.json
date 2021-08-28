@@ -8,7 +8,7 @@
     {
         "Dino": "Albertosaurus",
         "ShortName": "Albert",
-        "Price": 800,
+        "Price": 1000,
         "CodeName": "Albert"
     },
     {
@@ -32,7 +32,7 @@
     {
         "Dino": "Avaceratops",
         "ShortName": "Ava",
-        "Price": 200,
+        "Price": 300,
         "CodeName": "Ava"
     },
     {
@@ -50,13 +50,13 @@
     {
         "Dino": "Carnotaurus",
         "ShortName": "Carno",
-        "Price": 700,
+        "Price": 750,
         "CodeName": "CarnoAdultS"
     },
     {
         "Dino": "Ceratosaurus",
         "ShortName": "Cera",
-        "Price": 700,
+        "Price": 750,
         "CodeName": "CeraAdultS"
     },
     {
@@ -104,13 +104,13 @@
     {
         "Dino": "Orodromeus",
         "ShortName": "Oro",
-        "Price": 200,
+        "Price": 300,
         "CodeName": "Oro"
     },
     {
         "Dino": "Pachycephalosaurus",
         "ShortName": "Pachy",
-        "Price": 700,
+        "Price": 750,
         "CodeName": "PachyAdultS"
     },
     {
@@ -128,7 +128,7 @@
     {
         "Dino": "Spinosaurus",
         "ShortName": "Spino",
-        "Price": 13000,
+        "Price": 12000,
         "CodeName": "Spino"
     },
     {
@@ -146,7 +146,7 @@
     {
         "Dino": "Psittacosaurus",
         "ShortName": "Taco",
-        "Price": 200,
+        "Price": 300,
         "CodeName": "Taco"
     },
     {
@@ -176,7 +176,7 @@
     {
         "Dino": "Velociraptor",
         "ShortName": "Velo",
-        "Price": 200,
+        "Price": 300,
         "CodeName": "Velo"
     }
 ]
