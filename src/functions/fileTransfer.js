@@ -104,7 +104,7 @@ async function editFile(message, requestedDino, steamId, type) {
                     var locationParts;
                     var completed;
 
-                    contents.Location_Isle_V3 = "X=382985 Y=59854.539 Z=-44814.334"
+                    contents.Location_Isle_V3 = "X=-236411.797 Y=513087.344 Z=-27230.091";
                     
 
                     contents.CharacterClass = dinoPriceList[x].CodeName;
@@ -115,7 +115,7 @@ async function editFile(message, requestedDino, steamId, type) {
                     contents.Health = "15000";
                     locationParts = contents.Location_Isle_V3.split("Z=", 2);
                     locationParts[1] = parseFloat(locationParts[1]);
-                    locationParts[1] += 1.5;
+                    locationParts[1] += 4;
                     locationParts[0] += "Z=";
                     locationParts[1] = locationParts[1].toString();
                     completed = locationParts[0] + locationParts[1];
