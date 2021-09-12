@@ -14,9 +14,10 @@ const prefix = process.env.PREFIX;
 //Logs a success message when log in succeeds
 
 //Importing functions
-var { growPrompts, injectPrompts, slayPrompts } = require('./functions/embeds');
+var { growPrompts, injectPrompts, slayPrompts, buyPrompts } = require('./functions/embeds');
 var { processFileTransfer, deleteFile } = require('./functions/fileTransfer');
 var { getSteamID, updateSteamID, addSteamID } = require('./api/steamManager');
+var { getUserDinos, addDino } = require('./functions/buyDinos');
 
 
 var processing = false;
@@ -69,9 +70,27 @@ discordClient.on("message", async message => {
         .substring(prefix.length)
         .split(/ +/g);
 
+    if ( cmdName.toLowerCase() === 'buydino' ) {
+        // if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+        var buyRequest = await buyPrompts(message);
+        console.log(`buy request: ${buyRequest}`);
+
+        if(!buyRequest) return;
+        if(await addDino(message.author.id, buyRequest[0])) {
+            message.reply(`successfully purchased and stored your dino`);
+        }
+        console.log(await getUserDinos(message.author.id));
+    }
+
+    if ( cmdName.toLowerCase() === 'dinos' ) {
+        var msg = await getUserDinos(message.author.id);
+        console.log(msg);
+        message.reply(msg);
+    }
+
     if ( cmdName.toLowerCase() === "grow" ) {
 
-        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#880990462050197514>`);
+        if ( !channelIdCheck(message.channel.id, "grow") ) return message.reply(`please use <#${channelIds.growChannel}>`);
 
         var growRequest = await growPrompts(message);
         console.log(`grow request: ${growRequest}`);
@@ -91,7 +110,7 @@ discordClient.on("message", async message => {
     }
 
     if ( cmdName.toLowerCase() === "inject" ) {
-        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#880990462050197514>`);
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
 
         var injectRequest = await injectPrompts(message);
         console.log(`inject request: ${injectRequest}`);
@@ -111,7 +130,7 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === "slay" ) {
         
-        if ( !channelIdCheck(message.channel.id, "slay") ) return message.reply(`please use <#880990389673279488>`);
+        if ( !channelIdCheck(message.channel.id, "slay") ) return message.reply(`please use <#${channelIds.slayChannel}>`);
 
         var slayRequest = await slayPrompts(message);
         console.log(`slay request: ${slayRequest}`);
@@ -132,7 +151,7 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() ===  "link") {
         
-        if ( !channelIdCheck(message.channel.id, "link") ) return message.reply(`please use <#880990510527950848>`);
+        if ( !channelIdCheck(message.channel.id, "link") ) return message.reply(`please use <#${channelIds.steamidChannel}>`);
 
         if( args.length != 1 ) return message.reply(`please use the following format:\n${prefix}link [steam ID here]`);
 
