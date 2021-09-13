@@ -411,10 +411,15 @@ async function buyPrompts(message) {
 }
 
 async function showDinos (message) {
-    var dinosInStorage = "";
     var names = [];
     var amounts = [];
-    var count = 0
+    var count = 0;
+
+    if ( !await getSteamID(message.author.id) ) {
+        message.reply(`you have to link your steam ID using ${prefix}link [your steam ID] and have bought a dino using ${prefix}buydino`);
+        return false;
+    }
+
     var dinosInStorageSize = Object.keys(await getUserDinos(message.author.id)).length;
 
     //Traverse a 1D JSON
@@ -435,4 +440,127 @@ async function showDinos (message) {
     }
     message.reply(prompt);
 }
-module.exports = { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos};
+
+async function redeemPrompts (message) {
+    var names = [];
+    var amounts = [];
+    var count = 0;
+    var timedOut = false;
+    var safelogged;
+
+    if ( !await getSteamID(message.author.id) ) {
+        message.reply(`you have to link your steam ID using ${prefix}link [your steam ID]`);
+        return false;
+    }
+
+    const filter = m => m.author.id === message.author.id;
+    const options = {
+        max: 1,
+        time: 200000
+    };
+
+    const prompt = new Discord.MessageEmbed()
+        .setTitle(`Redeem Menu`)
+        .setColor(`#34eb4f`)
+        .addFields(
+            {
+                name: `Are you safelogged?`,
+                value:`Please respond with:\nyes\nno`
+            }
+        )
+        .setFooter(`User transaction: ${message.author.username}`);
+    
+    message.reply(prompt);
+    await message.channel.awaitMessages(filter, options)
+            .then( collected => {
+                safelogged = collected.first().content
+            })
+            .catch(() =>{
+                message.reply(`time's up. Please try again.`);
+                return timedOut = true;
+            });
+    if (timedOut) return false;
+    if(safelogged.toLowerCase().startsWith("n")) {
+        message.reply(`request cancelled.`);
+        return false;
+    }
+
+    prompt.fields = [];
+
+    var dinosInStorageSize = Object.keys(await getUserDinos(message.author.id)).length;
+
+    //Traverse a 1D JSON
+    for (var [dino, amount] of Object.entries(await getUserDinos(message.author.id))) {
+        names[count] = `${dino}`;
+        amounts[count] = `${amount}`;
+        count++;
+    }
+    const promptStorage = new Discord.MessageEmbed()
+    .setTitle(`Dino Storage`)
+    .setDescription(`Type the name of which Dino you would like to inject.`)
+    .setColor(`#34eb4f`)
+    .setAuthor(message.author.username, message.author.displayAvatarURL())
+
+    for (var x = 0; x < dinosInStorageSize; x++) {
+        promptStorage.addField(names[x],`x${amounts[x]}`,true);
+    }
+    message.reply(promptStorage);
+
+    var dino;
+    var price;
+    var dinoFound = false;
+    await message.channel.awaitMessages(filter, options)
+        .then( collected => {
+            dino = collected.first().content
+        } )
+        .catch( () => {
+            message.reply(`time's up. Please try again.`);
+            return timedOut = true;
+        });
+    if (timedOut) return false;
+    if (cancelCheck(dino)) {
+        message.reply(`you canceled the request.`);
+        return false;
+    }
+
+    var dinoPriceList = await getDinoPrices();
+
+    for (var x = 0; x < dinoPriceList.length; x++) {
+        if( dino.toLowerCase() == dinoPriceList[x].ShortName.toLowerCase() ) {
+            price = dinoPriceList[x].Price;
+            dinoFound = true;
+            break;
+        }
+    }
+    if (!dinoFound) {
+        message.reply(`invalid dino, please try again.`);
+        return false;
+    }
+
+    prompt.fields = [];
+    var confirm;
+    prompt.addFields( {
+        name: `Confirm your order of a ${dino}.`,
+        value: `Please type either:\nyes\nno`
+    });
+    message.reply(prompt);
+    await message.channel.awaitMessages(filter, options)
+        .then( collected => {
+            confirm = collected.first().content
+        } )
+        .catch( () => {
+            message.reply(`time's up. Please try again.`);
+            return timedOut = true;
+        } );
+    if(timedOut) return false;
+    
+    prompt.fields = [];
+    prompt.setTitle(`Please wait for the transaction to be completed.`);
+    message.reply(prompt);
+
+    var steamId = await getSteamID(message.author.id);
+    if (confirm.toLowerCase().startsWith("y")) return [dino, price, steamId];
+    message.reply(`transaction cancelled.`);
+    return false;
+}
+module.exports = { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos, redeemPrompts};

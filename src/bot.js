@@ -14,7 +14,7 @@ const prefix = process.env.PREFIX;
 //Logs a success message when log in succeeds
 
 //Importing functions
-var { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos } = require('./functions/embeds');
+var { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos, redeemPrompts } = require('./functions/embeds');
 var { processFileTransfer, deleteFile } = require('./functions/fileTransfer');
 var { getSteamID, updateSteamID, addSteamID } = require('./api/steamManager');
 var { getUserDinos, addDino } = require('./functions/buyDinos');
@@ -71,7 +71,7 @@ discordClient.on("message", async message => {
         .split(/ +/g);
 
     if ( cmdName.toLowerCase() === 'buydino' ) {
-        // if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
         var buyRequest = await buyPrompts(message);
         console.log(`buy request: ${buyRequest}`);
 
@@ -122,6 +122,25 @@ discordClient.on("message", async message => {
 
         processing = true;
         if (await processFileTransfer(message, injectRequest, "inject") ) {
+            processing = false;
+            message.reply(`successfully injected your dino. Please log back in to the server.`);
+        } else {
+            processing = false;
+        }
+    }
+
+    if (cmdName.toLowerCase() === "redeem") {
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+
+        var redeemRequest = await redeemPrompts(message);
+        console.log(`redeem request: ${redeemRequest}`);
+
+        if (!redeemRequest) return;
+
+        await processingCheck(message);
+
+        processing = true;
+        if (await processFileTransfer(message, redeemRequest, "inject") ) {
             processing = false;
             message.reply(`successfully injected your dino. Please log back in to the server.`);
         } else {
