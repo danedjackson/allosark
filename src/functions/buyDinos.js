@@ -19,6 +19,7 @@ async function getUserDinos (userID) {
 }
 
 async function addDino (userID, dinoName) {
+    dinoName = dinoName.charAt(0).toUpperCase() + dinoName.slice(1).toLowerCase();
     var userFound = false;
     try {
         var userDinoList = JSON.parse(fs.readFileSync(userDinos));

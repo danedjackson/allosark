@@ -14,7 +14,7 @@ const prefix = process.env.PREFIX;
 //Logs a success message when log in succeeds
 
 //Importing functions
-var { growPrompts, injectPrompts, slayPrompts, buyPrompts } = require('./functions/embeds');
+var { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos } = require('./functions/embeds');
 var { processFileTransfer, deleteFile } = require('./functions/fileTransfer');
 var { getSteamID, updateSteamID, addSteamID } = require('./api/steamManager');
 var { getUserDinos, addDino } = require('./functions/buyDinos');
@@ -83,9 +83,10 @@ discordClient.on("message", async message => {
     }
 
     if ( cmdName.toLowerCase() === 'dinos' ) {
-        var msg = await getUserDinos(message.author.id);
-        console.log(msg);
-        message.reply(msg);
+        // var msg = await getUserDinos(message.author.id);
+        await showDinos(message);
+        // console.log(msg);
+        // message.reply(msg);
     }
 
     if ( cmdName.toLowerCase() === "grow" ) {

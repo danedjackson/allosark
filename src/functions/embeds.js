@@ -74,6 +74,10 @@ async function growPrompts(message) {
             return timedOut = true;
         });
     if (timedOut) return false;
+    if (cancelCheck(dino)) {
+        message.reply(`you canceled the request.`);
+        return false;
+    }
     for (var x = 0; x < dinoPriceList.length; x++) {
         if( dino.toLowerCase() == dinoPriceList[x].ShortName.toLowerCase() ) {
             price = dinoPriceList[x].Price;
@@ -85,7 +89,6 @@ async function growPrompts(message) {
         message.reply(`invalid dino, please try again.`);
         return false;
     }
-
     prompt.fields = [];
     var steamId;
     prompt.addFields( {
@@ -102,6 +105,10 @@ async function growPrompts(message) {
             return timedOut = true;
         } );
     if(timedOut) return false;
+    if (cancelCheck(steamId)) {
+        message.reply(`you canceled the request.`);
+        return false;
+    }
     if(!steamId.startsWith('7656')) {
         message.reply(`that is an invalid steam ID, please try again.`);
         return false;
@@ -201,6 +208,10 @@ async function injectPrompts(message) {
             return timedOut = true;
         });
     if (timedOut) return false;
+    if (cancelCheck(dino)) {
+        message.reply(`you canceled the request.`);
+        return false;
+    }
     for (var x = 0; x < dinoPriceList.length; x++) {
         if( dino.toLowerCase() == dinoPriceList[x].ShortName.toLowerCase() ) {
             price = dinoPriceList[x].Price;
@@ -355,6 +366,10 @@ async function buyPrompts(message) {
             return timedOut = true;
         } );
     if (timedOut) return false;
+    if (cancelCheck(dino)) {
+        message.reply(`you canceled the request.`);
+        return false;
+    }
     for (var x = 0; x < dinoPriceList.length; x++) {
         if( dino.toLowerCase() == dinoPriceList[x].ShortName.toLowerCase() ) {
             price = dinoPriceList[x].Price;
@@ -394,4 +409,30 @@ async function buyPrompts(message) {
     message.reply(`transaction cancelled.`);
     return false;
 }
-module.exports = { growPrompts, injectPrompts, slayPrompts, buyPrompts};
+
+async function showDinos (message) {
+    var dinosInStorage = "";
+    var names = [];
+    var amounts = [];
+    var count = 0
+    var dinosInStorageSize = Object.keys(await getUserDinos(message.author.id)).length;
+
+    //Traverse a 1D JSON
+    for (var [dino, amount] of Object.entries(await getUserDinos(message.author.id))) {
+        names[count] = `${dino}`;
+        amounts[count] = `${amount}`;
+        count++;
+    }
+
+    const prompt = new Discord.MessageEmbed()
+        .setTitle(`Dino Storage`)
+        .setDescription(`This is a collection of dinos you have purchased.\nThese can be redeemed for adult dinos in game.`)
+        .setColor(`#34eb4f`)
+        .setAuthor(message.author.username, message.author.displayAvatarURL())
+
+    for (var x = 0; x < dinosInStorageSize; x++) {
+        prompt.addField(names[x],`x${amounts[x]}`,true);
+    }
+    message.reply(prompt);
+}
+module.exports = { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos};
