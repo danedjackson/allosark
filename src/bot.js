@@ -83,10 +83,8 @@ discordClient.on("message", async message => {
     }
 
     if ( cmdName.toLowerCase() === 'dinos' ) {
-        // var msg = await getUserDinos(message.author.id);
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
         await showDinos(message);
-        // console.log(msg);
-        // message.reply(msg);
     }
 
     if ( cmdName.toLowerCase() === "grow" ) {
