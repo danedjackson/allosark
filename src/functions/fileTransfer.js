@@ -8,6 +8,7 @@ const ftppassword = process.env.FTPPASSWORD;
 
 var { getUserAmount, deductUserAmountCash, deductUserAmountBank } = require('../api/unbelievaboat');
 var { getDinoPrices } = require('./pricelist');
+var { removeDino } = require('./buyDinos');
 
 async function deleteLocalFile(fileId) {
     console.log("Deleting local files . . .");
@@ -24,7 +25,8 @@ async function processFileTransfer(message, request, type) {
     // if (!await downloadFile(steamId)) return false;
     if (!await downloadFile(message, steamId)) return false;
     if (!await editFile(message,requestedDino, steamId, type)) return false;
-    if (!await deductMoney(message, price, steamId)) return false;
+    if(type != "redeem") if (!await deductMoney(message, price, steamId)) return false;
+    if(type == "redeem") if (!await removeDino(message, requestedDino)) return false; 
     if (!await uploadFile(message, steamId)) return false;
 
     return true;
@@ -85,7 +87,7 @@ async function editFile(message, requestedDino, steamId, type) {
                 message.reply(`you do not have this ${requestedDino} in game. Please create a ${requestedDino} and try again.`);
                 return false;
             }
-        } else if(type == "inject") {
+        } else if(type == "inject" || type == "redeem") {
             var dinoPriceList = await getDinoPrices();
 
             for ( var x = 0; x < dinoPriceList.length; x++ ) {

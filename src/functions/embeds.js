@@ -419,14 +419,18 @@ async function showDinos (message) {
         message.reply(`you have to link your steam ID using ${prefix}link [your steam ID] and have bought a dino using ${prefix}buydino`);
         return false;
     }
+    try{
+        var dinosInStorageSize = Object.keys(await getUserDinos(message.author.id)).length;
 
-    var dinosInStorageSize = Object.keys(await getUserDinos(message.author.id)).length;
-
-    //Traverse a 1D JSON
-    for (var [dino, amount] of Object.entries(await getUserDinos(message.author.id))) {
-        names[count] = `${dino}`;
-        amounts[count] = `${amount}`;
-        count++;
+        //Traverse a 1D JSON
+        for (var [dino, amount] of Object.entries(await getUserDinos(message.author.id))) {
+            names[count] = `${dino}`;
+            amounts[count] = `${amount}`;
+            count++;
+        }
+    } catch (err) {
+        console.log(err);
+        return message.reply(`could not retrieve stored dinos for you.`);
     }
 
     const prompt = new Discord.MessageEmbed()
@@ -434,7 +438,9 @@ async function showDinos (message) {
         .setDescription(`This is a collection of dinos you have purchased.\nThese can be redeemed for adult dinos in game.`)
         .setColor(`#34eb4f`)
         .setAuthor(message.author.username, message.author.displayAvatarURL())
-
+    if (dinosInStorageSize == 0) {
+        prompt.addField(`You have no dinos`, `😥`, true);
+    }
     for (var x = 0; x < dinosInStorageSize; x++) {
         prompt.addField(names[x],`x${amounts[x]}`,true);
     }

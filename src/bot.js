@@ -138,7 +138,7 @@ discordClient.on("message", async message => {
         await processingCheck(message);
 
         processing = true;
-        if (await processFileTransfer(message, redeemRequest, "inject") ) {
+        if (await processFileTransfer(message, redeemRequest, "redeem") ) {
             processing = false;
             message.reply(`successfully injected your dino. Please log back in to the server.`);
         } else {

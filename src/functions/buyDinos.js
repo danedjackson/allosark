@@ -17,6 +17,42 @@ async function getUserDinos (userID) {
     }
     
 }
+async function removeDino(message, dinoName) {
+    userID = message.author.id;
+    dinoName = dinoName.charAt(0).toUpperCase() + dinoName.slice(1).toLowerCase();
+    var userFound = false;
+
+    try {
+        var userDinoList = JSON.parse(fs.readFileSync(userDinos));
+        for (var x = 0; x < userDinoList.length; x++) {
+            //Searches for user
+            if (userID == userDinoList[x].User) {
+                userFound = true;
+                //if dino does not exist, return. If it does exist, decrement dino count, if count is 0, delete it.
+                if (!userDinoList[x].Dinos[dinoName]) {
+                    message.reply(`you do not have a ${dinoName} to redeem.`);
+                    return false;
+                } else {
+                    userDinoList[x].Dinos[`${dinoName}`] -= 1;
+                    if(userDinoList[x].Dinos[`${dinoName}`] == 0) {
+                        delete userDinoList[x].Dinos[`${dinoName}`];
+                        break;
+                    }
+                }
+            }
+        } 
+        if (!userFound) {
+            message.reply(`could not find any dinos.`);
+            return false;
+        }
+        fs.writeFileSync(path.resolve(__dirname, "../json/user-dinos.json"), JSON.stringify(userDinoList, null, 4));
+        return true;
+    } catch ( err ) {
+        console.log(err);
+        message.reply(`something went wrong, please try again.`);
+        return false;
+    }
+}
 
 async function addDino (userID, dinoName) {
     dinoName = dinoName.charAt(0).toUpperCase() + dinoName.slice(1).toLowerCase();
@@ -53,4 +89,4 @@ async function addDino (userID, dinoName) {
     }
 }
 
-module.exports = { getUserDinos, addDino };
+module.exports = { getUserDinos, addDino, removeDino };
