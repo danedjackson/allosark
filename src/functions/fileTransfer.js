@@ -17,18 +17,23 @@ async function deleteLocalFile(fileId) {
     });
 }
 
-async function processFileTransfer(message, request, type) {
+async function purchaseDino(message, request, type) {
     var steamId = request[2];
     var price = parseInt(request[1]);
-    var requestedDino = request[0];
 
-    if (type = "buydino"){ 
+    if (type == "buydino"){ 
         if(!await deductMoney(message, price, steamId)){
             return false;
         } else {
             return true;
         }
     }
+}
+
+async function processFileTransfer(message, request, type) {
+    var steamId = request[2];
+    var price = parseInt(request[1]);
+    var requestedDino = request[0];
     
     // if (!await downloadFile(steamId)) return false;
     if (!await downloadFile(message, steamId)) return false;
@@ -220,4 +225,4 @@ async function deleteFile(message, steamId) {
         return false;
     }
 }
-module.exports = { processFileTransfer, deleteFile};
+module.exports = { processFileTransfer, deleteFile, purchaseDino };

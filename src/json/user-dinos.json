@@ -11,12 +11,10 @@
     {
         "User": "124124853816000512",
         "Dinos": {
-            "Rex": 3,
+            "Rex": 4,
             "Utah": 1,
-            "Trike": 1,
             "Acro": 1,
-            "Spino": 2,
-            "Shant": 1
+            "Spino": 1
         }
     }
 ]

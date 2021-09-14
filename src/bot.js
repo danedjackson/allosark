@@ -72,6 +72,9 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === 'buydino' ) {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+
+        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}buydino`);
+
         var buyRequest = await buyPrompts(message);
         console.log(`buy request: ${buyRequest}`);
 
@@ -84,12 +87,17 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === 'dinos' ) {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+
+        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}dinos`);
+
         await showDinos(message);
     }
 
     if ( cmdName.toLowerCase() === "grow" ) {
 
         if ( !channelIdCheck(message.channel.id, "grow") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+
+        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}grow`);
 
         var growRequest = await growPrompts(message);
         console.log(`grow request: ${growRequest}`);
@@ -111,6 +119,8 @@ discordClient.on("message", async message => {
     if ( cmdName.toLowerCase() === "inject" ) {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
 
+        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}inject`);
+
         var injectRequest = await injectPrompts(message);
         console.log(`inject request: ${injectRequest}`);
 
@@ -129,6 +139,8 @@ discordClient.on("message", async message => {
 
     if (cmdName.toLowerCase() === "redeem") {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+
+        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}redeem`);
 
         var redeemRequest = await redeemPrompts(message);
         console.log(`redeem request: ${redeemRequest}`);
@@ -149,6 +161,8 @@ discordClient.on("message", async message => {
     if ( cmdName.toLowerCase() === "slay" ) {
         
         if ( !channelIdCheck(message.channel.id, "slay") ) return message.reply(`please use <#${channelIds.slayChannel}>`);
+
+        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}slay`);
 
         var slayRequest = await slayPrompts(message);
         console.log(`slay request: ${slayRequest}`);

@@ -89,4 +89,18 @@ async function addDino (userID, dinoName) {
     }
 }
 
-module.exports = { getUserDinos, addDino, removeDino };
+
+async function purchaseDino(message, request, type) {
+    var steamId = request[2];
+    var price = parseInt(request[1]);
+
+    if (type == "buydino"){ 
+        if(!await deductMoney(message, price, steamId)){
+            return false;
+        } else {
+            return true;
+        }
+    }
+}
+
+module.exports = { getUserDinos, addDino, removeDino, purchaseDino};
