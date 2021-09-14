@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const discordClient = new Discord.Client();
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 const adminUsers = JSON.parse(fs.readFileSync(path.resolve(__dirname, "./json/admin-roles.json")));
 const channelIds = JSON.parse(fs.readFileSync(path.resolve(__dirname, "./json/channels.json")));
 
@@ -18,8 +19,9 @@ var { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos, redeemProm
 var { processFileTransfer, deleteFile } = require('./functions/fileTransfer');
 var { getSteamID, updateSteamID, addSteamID } = require('./api/steamManager');
 var { getUserDinos, addDino } = require('./functions/buyDinos');
+const updateCount = require('./functions/serverPop');
 
-
+var serverCount;
 var processing = false;
 
 async function processingCheck(message) {
@@ -54,9 +56,30 @@ function channelIdCheck(channel, cmd) {
     return false;
 }
 
+function serverCountLoop() {
+    setTimeout(async function() {
+        await getServerCount();
+        await updateCount(discordClient, serverCount);
+        serverCountLoop();
+    }, 5000);
+}
+async function getServerCount() {
+    return await axios.get("http://localhost:5000/serv-count")
+        .then(function (response){
+            serverCount = response.data;
+        })
+        .catch(function (error) {
+            console.log("Error fetching server count: " + error);
+        })
+        .then(function () {
+        })
+}
+
 discordClient.on("ready", () => {
     console.log(`Successfully logged in.`);
+    serverCountLoop();
 });
+
 
 //On message listener
 discordClient.on("message", async message => {
@@ -207,6 +230,5 @@ discordClient.on("message", async message => {
     }
 
 });
-
 
 discordClient.login(token);
