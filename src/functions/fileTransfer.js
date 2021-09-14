@@ -22,6 +22,14 @@ async function processFileTransfer(message, request, type) {
     var price = parseInt(request[1]);
     var requestedDino = request[0];
 
+    if (type = "buydino"){ 
+        if(!await deductMoney(message, price, steamId)){
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
     // if (!await downloadFile(steamId)) return false;
     if (!await downloadFile(message, steamId)) return false;
     if (!await editFile(message,requestedDino, steamId, type)) return false;

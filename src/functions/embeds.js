@@ -3,7 +3,8 @@ const prefix = process.env.PREFIX;
 
 var { getDinoPrices } = require('./pricelist');
 var { getSteamID } = require('../api/steamManager');
-var { getUserDinos } = require('./buyDinos')
+var { getUserDinos } = require('./buyDinos');
+var { processFileTransfer, deleteFile } = require('../functions/fileTransfer');
 
 const cancelCheck = (msg) => {
     if(msg.toLowerCase().startsWith("cancel")) {
@@ -404,6 +405,10 @@ async function buyPrompts(message) {
         message.reply(prompt);
 
         var steamId = await getSteamID(message.author.id);
+        //Paying for the dino
+        if(!await processFileTransfer(message, [dino, price, steamId], "buydino")) {
+            return false;
+        }
         return [dino, price, steamId];
     }
     message.reply(`transaction cancelled.`);
