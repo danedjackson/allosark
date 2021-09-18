@@ -15,10 +15,10 @@ const prefix = process.env.PREFIX;
 //Logs a success message when log in succeeds
 
 //Importing functions
-var { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos, redeemPrompts } = require('./functions/embeds');
+var { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos, redeemPrompts, givePrompts } = require('./functions/embeds');
 var { processFileTransfer, deleteFile } = require('./functions/fileTransfer');
 var { getSteamID, updateSteamID, addSteamID } = require('./api/steamManager');
-var { getUserDinos, addDino } = require('./functions/buyDinos');
+var { getUserDinos, addDino, giveDino } = require('./functions/buyDinos');
 const updateCount = require('./functions/serverPop');
 
 var serverCount;
@@ -96,7 +96,7 @@ discordClient.on("message", async message => {
     if ( cmdName.toLowerCase() === 'buydino' ) {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
 
-        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}buydino`);
+        if( args.length > 0 ) return message.reply(`please use the following format:\n${prefix}buydino`);
 
         var buyRequest = await buyPrompts(message);
         console.log(`buy request: ${buyRequest}`);
@@ -111,7 +111,7 @@ discordClient.on("message", async message => {
     if ( cmdName.toLowerCase() === 'dinos' ) {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
 
-        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}dinos`);
+        if( args.length > 0 ) return message.reply(`please use the following format:\n${prefix}dinos`);
 
         await showDinos(message);
     }
@@ -120,7 +120,7 @@ discordClient.on("message", async message => {
 
         if ( !channelIdCheck(message.channel.id, "grow") ) return message.reply(`please use <#${channelIds.growChannel}>`);
 
-        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}grow`);
+        if( args.length > 0 ) return message.reply(`please use the following format:\n${prefix}grow`);
 
         var growRequest = await growPrompts(message);
         console.log(`grow request: ${growRequest}`);
@@ -142,7 +142,7 @@ discordClient.on("message", async message => {
     if ( cmdName.toLowerCase() === "inject" ) {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
 
-        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}inject`);
+        if( args.length > 0 ) return message.reply(`please use the following format:\n${prefix}inject`);
 
         var injectRequest = await injectPrompts(message);
         console.log(`inject request: ${injectRequest}`);
@@ -163,7 +163,7 @@ discordClient.on("message", async message => {
     if (cmdName.toLowerCase() === "redeem") {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
 
-        if( args.length > 1 ) return message.reply(`please use the following format:\n${prefix}redeem`);
+        if( args.length > 0 ) return message.reply(`please use the following format:\n${prefix}redeem`);
 
         var redeemRequest = await redeemPrompts(message);
         console.log(`redeem request: ${redeemRequest}`);
@@ -178,6 +178,24 @@ discordClient.on("message", async message => {
             message.reply(`successfully injected your dino. Please log back in to the server.`);
         } else {
             processing = false;
+        }
+    }
+
+    if ( cmdName.toLowerCase() === "givedino" ) {
+        if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+        
+        if ( args.length != 1) return message.reply(`please use the following format:\n${prefix}givedino @Ping User Here`);
+
+        var targetMember = message.mentions.members.first();
+
+        if ( message.mentions.members.first() == undefined ) { return message.reply(`could not find that user.`) }
+        
+        // if ( Number.isNaN(parseInt(targetMember)) ) {return message.reply(`please use the following format:\n${prefix}givedino @Ping User Here`)};
+
+        var giveRequest = await givePrompts(message);
+
+        if (await giveDino(message, giveRequest)) {
+            message.reply(`successfully gave your ${giveRequest} to ${targetMember}`);
         }
     }
 

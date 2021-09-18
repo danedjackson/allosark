@@ -5,16 +5,21 @@
             "Utah": 2,
             "Allo": 1,
             "Velo": 2,
-            "Theri": 2
+            "Theri": 2,
+            "Rex": 1
         }
     },
     {
         "User": "124124853816000512",
         "Dinos": {
-            "Rex": 3,
+            "Rex": 2,
             "Utah": 1,
             "Acro": 1,
             "Spino": 1
         }
+    },
+    {
+        "User": "417474045353787414",
+        "Dinos": {}
     }
 ]
