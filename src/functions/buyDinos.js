@@ -30,7 +30,7 @@ async function removeDino(message, dinoName) {
                 userFound = true;
                 //if dino does not exist, return. If it does exist, decrement dino count, if count is 0, delete it.
                 if (!userDinoList[x].Dinos[dinoName]) {
-                    message.reply(`you do not have a ${dinoName} to redeem.`);
+                    message.reply(`you do not have a ${dinoName}.`);
                     return false;
                 } else {
                     userDinoList[x].Dinos[`${dinoName}`] -= 1;
@@ -103,8 +103,10 @@ async function purchaseDino(message, request, type) {
     }
 }
 
-async function giveDino(message, dino) {
-    if (!await removeDino(message, dino)) { message.reply(`something went wrong removing your dino, please try again`); return false; }
+async function giveDino(message, dino, isAdmin) {
+    if(!isAdmin){
+        if (!await removeDino(message, dino)) { return false; }
+    }
 
     if (!await addDino(message.mentions.members.first().id, dino)) { message.reply(`something went wrong giving your dino away, let an admin know if you lost your dino`); return false; }
 

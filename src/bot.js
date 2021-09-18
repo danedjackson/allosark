@@ -183,18 +183,31 @@ discordClient.on("message", async message => {
 
     if ( cmdName.toLowerCase() === "givedino" ) {
         if ( !channelIdCheck(message.channel.id, "inject") ) return message.reply(`please use <#${channelIds.growChannel}>`);
+
+        var isAdmin = false;
+
+        adminRoleCheck(message) ? isAdmin = true : isAdmin = false;
         
-        if ( args.length != 1) return message.reply(`please use the following format:\n${prefix}givedino @Ping User Here`);
+        if ( args.length != 1 && !isAdmin) return message.reply(`please use the following format:\n${prefix}givedino @Ping User Here`);
+
+        if ( args.length != 2 && isAdmin) return message.reply(`please use the following format:\n${prefix}givedino @Ping User Here DinoNameHere`);
 
         var targetMember = message.mentions.members.first();
 
         if ( message.mentions.members.first() == undefined ) { return message.reply(`could not find that user.`) }
         
-        // if ( Number.isNaN(parseInt(targetMember)) ) {return message.reply(`please use the following format:\n${prefix}givedino @Ping User Here`)};
+        if (isAdmin) { 
+            if(await giveDino(message, args[1], isAdmin)) {
+                return message.reply(`added ${args[1]} to ${targetMember.displayName}'s inventory.`); 
+            } else {
+                return message.reply(`something went wrong adding this dino`);
+            }
+        
+        }
 
         var giveRequest = await givePrompts(message);
 
-        if (await giveDino(message, giveRequest)) {
+        if (await giveDino(message, giveRequest, false)) {
             message.reply(`successfully gave your ${giveRequest} to ${targetMember}`);
         }
     }

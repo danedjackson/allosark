@@ -638,14 +638,17 @@ async function givePrompts (message) {
         message.reply(`invalid dino, please try again.`);
         return false;
     } 
+    const confirmPrompt = new Discord.MessageEmbed()
+    .setTitle(`Confirmation Of Transfer`)
+    .setColor(`#34eb4f`)
+    .setAuthor(message.author.username, message.author.displayAvatarURL())
 
-    prompt.fields = [];
-    prompt.addFields(
+    confirmPrompt.addFields(
             {name: `Dino: `, value: `${dino}`},
             {name: `To user: `, value: `${message.mentions.members.first().displayName}`},
             {name: `Confirm transfer?`, value: `Please type either:\nyes\nno`}
         );
-    message.reply(prompt);
+    message.reply(confirmPrompt);
     await message.channel.awaitMessages(filter, options)
         .then( collected => {
             confirm = collected.first().content
@@ -661,9 +664,9 @@ async function givePrompts (message) {
     }
     
     if (confirm.toLowerCase().startsWith("y")) {
-        prompt.fields = [];
-        prompt.setTitle(`Please wait for the transaction to be completed.`);
-        message.reply(prompt);
+        confirmPrompt.fields = [];
+        confirmPrompt.setTitle(`Please wait for the transaction to be completed.`);
+        message.reply(confirmPrompt);
         return dino;
     }
 
