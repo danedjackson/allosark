@@ -574,4 +574,103 @@ async function redeemPrompts (message) {
     message.reply(`transaction cancelled.`);
     return false;
 }
-module.exports = { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos, redeemPrompts};
+
+async function givePrompts (message) {
+    var dino;
+    var dinoFound = false;
+    var confirm;
+    var names = [];
+    var amounts = [];
+    var count = 0;
+    var timedOut = false;
+
+    const filter = m => m.author.id === message.author.id;
+    const options = {
+        max: 1,
+        time: 200000
+    };
+
+    var dinosInStorageSize = Object.keys(await getUserDinos(message.author.id)).length;
+
+    if ( dinosInStorageSize < 1 ) { message.reply(`you have no stored dinos.`); return false; }
+
+    //Traverse a 1D JSON
+    for (var [dino, amount] of Object.entries(await getUserDinos(message.author.id))) {
+        names[count] = `${dino}`;
+        amounts[count] = `${amount}`;
+        count++;
+    }
+
+    const prompt = new Discord.MessageEmbed()
+    .setTitle(`Dino Storage`)
+    .setDescription(`Type the name of which Dino you would like to give to ${message.mentions.members.first().displayName}.`)
+    .setColor(`#34eb4f`)
+    .setAuthor(message.author.username, message.author.displayAvatarURL())
+
+    for (var x = 0; x < dinosInStorageSize; x++) {
+        prompt.addField(names[x],`x${amounts[x]}`,true);
+    }
+    message.reply(prompt);
+
+     await message.channel.awaitMessages(filter, options)
+        .then( collected => {
+            dino = collected.first().content
+        } )
+        .catch( () => {
+            message.reply(`time's up. Please try again.`);
+            return timedOut = true;
+        });
+    if (timedOut) return false;
+    if (cancelCheck(dino)) {
+        message.reply(`you canceled the request.`);
+        return false;
+    }
+
+    var dinoPriceList = await getDinoPrices();
+
+    for (var x = 0; x < dinoPriceList.length; x++) {
+        if( dino.toLowerCase() == dinoPriceList[x].ShortName.toLowerCase() ) {
+            dinoFound = true;
+            break;
+        }
+    }
+    if (!dinoFound) {
+        message.reply(`invalid dino, please try again.`);
+        return false;
+    } 
+    const confirmPrompt = new Discord.MessageEmbed()
+    .setTitle(`Confirmation Of Transfer`)
+    .setColor(`#34eb4f`)
+    .setAuthor(message.author.username, message.author.displayAvatarURL())
+
+    confirmPrompt.addFields(
+            {name: `Dino: `, value: `${dino}`},
+            {name: `To user: `, value: `${message.mentions.members.first().displayName}`},
+            {name: `Confirm transfer?`, value: `Please type either:\nyes\nno`}
+        );
+    message.reply(confirmPrompt);
+    await message.channel.awaitMessages(filter, options)
+        .then( collected => {
+            confirm = collected.first().content
+        } )
+        .catch( () => {
+            message.reply(`time's up. Please try again.`);
+            return timedOut = true;
+        } );
+    if(timedOut) return false;
+    if (cancelCheck(confirm)) {
+        message.reply(`you canceled the request.`);
+        return false;
+    }
+    
+    if (confirm.toLowerCase().startsWith("y")) {
+        confirmPrompt.fields = [];
+        confirmPrompt.setTitle(`Please wait for the transaction to be completed.`);
+        message.reply(confirmPrompt);
+        return dino;
+    }
+
+    message.reply(`transaction cancelled.`);
+    return false;
+}
+module.exports = { growPrompts, injectPrompts, slayPrompts, buyPrompts, showDinos, redeemPrompts, givePrompts};
