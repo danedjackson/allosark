@@ -127,11 +127,19 @@ async function editFile(message, requestedDino, steamId, type) {
                     contents.Thirst = "9999";
                     contents.Stamina = "9999";
                     contents.Health = "15000";
-                    locationParts = contents.Location_Isle_V3.split("Z=", 2);
-                    locationParts[1] = parseFloat(locationParts[1]);
-                    locationParts[1] += 5;
-                    locationParts[0] += "Z=";
-                    locationParts[1] = locationParts[1].toString();
+                    try {
+                        locationParts = contents.Location_Isle_V3.split("Z=", 2);
+                        locationParts[1] = parseFloat(locationParts[1]);
+                        locationParts[1] += 5;
+                        locationParts[0] += "Z=";
+                        locationParts[1] = locationParts[1].toString();
+                    } catch {
+                        locationParts = contents.Location_Thenyaw_Island.split("Z=", 2);
+                        locationParts[1] = parseFloat(locationParts[1]);
+                        locationParts[1] += 5;
+                        locationParts[0] += "Z=";
+                        locationParts[1] = locationParts[1].toString();
+                    }
                     completed = locationParts[0] + locationParts[1];
                     contents.Location_Isle_V3 = completed;
                     break;
